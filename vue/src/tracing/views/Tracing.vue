@@ -14,6 +14,15 @@
               />
             </v-col>
             <v-col cols="auto">
+              <QuickSpanFilter
+                :date-range="dateRange"
+                :uql="uql"
+                name="service"
+                :attr-key="AttrKey.serviceName"
+                class="ml-2"
+              />
+            </v-col>
+            <v-col cols="auto">
               <SystemGroupPicker
                 :loading="systems.loading"
                 :value="systems.activeSystems"
@@ -32,8 +41,9 @@
           <v-row align="end" no-gutters>
             <v-col cols="auto">
               <v-tabs :key="$route.fullPath" background-color="transparent">
-                <v-tab :to="routes.groupList" exact-path>Groups</v-tab>
+                <v-tab :to="routes.liveList" exact-path>Live</v-tab>
                 <v-tab :to="routes.spanList" exact-path>Spans</v-tab>
+                <v-tab :to="routes.groupList" exact-path>Groups</v-tab>
                 <v-tab :to="routes.timeseries" exact-path>Timeseries</v-tab>
               </v-tabs>
             </v-col>
@@ -87,6 +97,7 @@ import HelpCard from '@/tracing/HelpCard.vue'
 import SavedViews from '@/tracing/views/SavedViews.vue'
 import UptraceQuery from '@/components/UptraceQuery.vue'
 import SpanQueryBuilder from '@/tracing/query/SpanQueryBuilder.vue'
+import QuickSpanFilter from '@/tracing/query/QuickSpanFilter.vue'
 
 // Utilities
 import { AttrKey } from '@/models/otel'
@@ -101,6 +112,7 @@ export default defineComponent({
     SavedViews,
     UptraceQuery,
     SpanQueryBuilder,
+    QuickSpanFilter,
   },
 
   props: {
@@ -171,6 +183,8 @@ export default defineComponent({
     }
 
     return {
+      AttrKey,
+
       user,
       systems,
       systemItems,
@@ -192,6 +206,10 @@ function useRoutes() {
     return routeFor('SpanGroupList')
   })
 
+  const liveList = computed(() => {
+    return routeFor('SpanLiveList')
+  })
+
   const spanList = computed(() => {
     return routeFor('SpanList')
   })
@@ -208,6 +226,7 @@ function useRoutes() {
   }
 
   return proxyRefs({
+    liveList,
     groupList,
     spanList,
     timeseries,

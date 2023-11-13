@@ -5,16 +5,6 @@
         <v-card max-width="500" class="mx-auto">
           <v-toolbar color="primary" dark flat>
             <v-toolbar-title>Log in</v-toolbar-title>
-
-            <v-spacer />
-
-            <v-btn
-              href="https://uptrace.dev/get/config.html#managing-users"
-              target="_blank"
-              outlined
-              small
-              >Create new user</v-btn
-            >
           </v-toolbar>
 
           <template v-if="sso.methods.length">
@@ -40,7 +30,7 @@
             </div>
           </template>
 
-          <v-form v-model="isValid" @submit.prevent="submit">
+          <v-form v-if="sso.methods.length == 0" v-model="isValid" @submit.prevent="submit">
             <v-card flat class="pa-8">
               <v-alert v-if="error" type="error">{{ error }}</v-alert>
 

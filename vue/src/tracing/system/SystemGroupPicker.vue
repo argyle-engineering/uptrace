@@ -69,19 +69,19 @@ export default defineComponent({
     const groups = computed(() => {
       const groups: Group[] = []
 
-      if (spanSystems.value.length > 1) {
-        groups.push({
-          name: 'Spans',
-          system: SystemName.SpansAll,
-          count: countGroups(spanSystems.value),
-        })
-      }
-
       if (logSystems.value.length > 1) {
         groups.push({
           name: 'Logs',
           system: SystemName.LogAll,
           count: countGroups(logSystems.value),
+        })
+      }
+
+      if (spanSystems.value.length > 1) {
+        groups.push({
+          name: 'Spans',
+          system: SystemName.SpansAll,
+          count: countGroups(spanSystems.value),
         })
       }
 

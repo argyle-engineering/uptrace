@@ -104,6 +104,74 @@ func (h *SpanHandler) ListSpans(w http.ResponseWriter, req bunrouter.Request) er
 	})
 }
 
+func (h *SpanHandler) ListSpansTail(w http.ResponseWriter, req bunrouter.Request) error {
+	ctx := req.Context()
+
+	f, err := DecodeSpanFilter(h.App, req)
+	if err != nil {
+		return err
+	}
+	disableColumnsAndGroups(f.parts)
+
+	if isAggAttr(f.SortBy) {
+		f.SortBy = attrkey.SpanDuration
+		f.SortDesc = true
+	}
+
+	q, _ := buildSpanIndexQuery(h.App, f, f.TimeFilter.Duration())
+	q = q.
+		ColumnExpr("id, trace_id").
+		Apply(func(q *ch.SelectQuery) *ch.SelectQuery {
+			return q.OrderExpr(string("time desc"))
+		}).
+		Limit(100)
+
+	spans := make([]*Span, 0)
+
+	count, err := q.ScanAndCount(ctx, &spans)
+	if err != nil {
+		return err
+	}
+
+	var group syncutil.Group
+
+	for i, span := range spans {
+		i := i
+		span := span
+
+		group.Go(func() error {
+			switch err := SelectSpan(ctx, h.App, span); err {
+			case nil:
+				return nil
+			case sql.ErrNoRows:
+				spans[i] = nil
+				return nil
+			default:
+				return err
+			}
+		})
+	}
+
+	if err := group.Err(); err != nil {
+		return err
+	}
+
+	for i := len(spans) - 1; i >= 0; i-- {
+		if spans[i] == nil {
+			spans = append(spans[:i], spans[i+1:]...)
+		}
+	}
+
+	return httputil.JSON(w, bunrouter.H{
+		"spans": spans,
+		"count": count,
+		"order": f.OrderByMixin,
+		"query": map[string]any{
+			"parts": f.parts,
+		},
+	})
+}
+
 func (h *SpanHandler) ListGroups(w http.ResponseWriter, req bunrouter.Request) error {
 	ctx := req.Context()
 

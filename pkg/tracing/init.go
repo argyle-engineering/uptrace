@@ -106,6 +106,7 @@ func initRoutes(ctx context.Context, app *bunapp.App, sp *SpanProcessor) {
 
 			g.GET("/groups", spanHandler.ListGroups)
 			g.GET("/spans", spanHandler.ListSpans)
+			g.GET("/spanstail", spanHandler.ListSpansTail)
 			g.GET("/percentiles", spanHandler.Percentiles)
 			g.GET("/group-stats", spanHandler.GroupStats)
 			g.GET("/timeseries", spanHandler.Timeseries)

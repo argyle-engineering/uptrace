@@ -132,10 +132,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { computed, defineComponent, proxyRefs } from 'vue'
+import { pick } from 'lodash-es'
 
 // Composables
-import { useRouteQuery } from '@/use/router'
+import { useRoute, useRouteQuery } from '@/use/router'
 import { useForceReload } from '@/use/force-reload'
 import { useDateRange } from '@/use/date-range'
 import { useUser } from '@/org/use-users'
@@ -172,9 +173,35 @@ export default defineComponent({
       dateRange,
       user,
       project,
+
+      routes: useRoutes(),
     }
   },
 })
+
+function useRoutes() {
+  const route = useRoute()
+
+  const overviewList = computed(() => {
+    return routeFor('Overview')
+  })
+
+  const spanGroupList = computed(() => {
+    return routeFor('SpanGroupList')
+  })
+
+  function routeFor(routeName: string) {
+    return {
+      name: routeName,
+      query: pick(route.value.query, ['query', 'time_gte', 'time_dur']),
+    }
+  }
+
+  return proxyRefs({
+    overviewList,
+    spanGroupList,
+  })
+}
 </script>
 
 <style lang="scss">

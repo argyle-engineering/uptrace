@@ -30,6 +30,7 @@ import OverviewGroups from '@/tracing/views/OverviewGroups.vue'
 import TracingHelp from '@/tracing/views/Help.vue'
 import TracingCheatsheet from '@/tracing/views/Cheatsheet.vue'
 import Tracing from '@/tracing/views/Tracing.vue'
+import TracingLive from '@/tracing/views/TracingLive.vue'
 import TracingGroups from '@/tracing/views/TracingGroups.vue'
 import TracingSpans from '@/tracing/views/TracingSpans.vue'
 import TracingTimeseries from '@/tracing/views/TracingTimeseries.vue'
@@ -226,6 +227,11 @@ const routes: RouteConfig[] = [
         name: 'SpanTimeseries',
         path: 'timeseries',
         components: { tracing: TracingTimeseries },
+      },
+      {
+        name: 'SpanLiveList',
+        path: 'live',
+        components: { tracing: TracingLive },
       },
     ],
   },

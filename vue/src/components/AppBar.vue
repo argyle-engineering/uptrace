@@ -8,21 +8,6 @@
         <span v-else>Welcome!</span>
       </div>
 
-      <div>
-        <GetStartedMenu :project="project" :achievements="achievements" />
-      </div>
-
-      <div class="ml-4">
-        <span>Completed </span>
-        <strong>{{ achievements.completed.length }} of {{ achievements.items.length }}</strong>
-        <span> tasks</span>
-        <v-progress-linear
-          :value="(achievements.completed.length / achievements.items.length) * 100"
-          color="blue lighten-1"
-          background-opacity="0.5"
-        ></v-progress-linear>
-      </div>
-
       <div class="ml-10">
         <v-menu offset-y dark>
           <template #activator="{ on }">
@@ -73,13 +58,6 @@
           </v-sheet>
         </v-menu>
       </div>
-
-      <v-spacer />
-
-      <v-btn href="https://app.uptrace.dev/join" small class="primary">
-        <v-icon left>mdi-cloud</v-icon>
-        <span>Uptrace Cloud</span>
-      </v-btn>
     </v-container>
   </v-system-bar>
 </template>
@@ -92,12 +70,8 @@ import { useAchievements } from '@/org/use-achievements'
 import { User } from '@/org/use-users'
 import { Project } from '@/org/use-projects'
 
-// Components
-import GetStartedMenu from '@/components/GetStartedMenu.vue'
-
 export default defineComponent({
   name: 'SystemBar',
-  components: { GetStartedMenu },
 
   props: {
     user: {

@@ -22,12 +22,6 @@
                 {{ sso.name || 'OpenID Connect' }}
               </v-btn>
             </v-card>
-
-            <div class="d-flex align-center">
-              <v-divider />
-              <div class="mx-2 grey--text text--lighten-1">or</div>
-              <v-divider />
-            </div>
           </template>
 
           <v-form v-if="sso.methods.length == 0" v-model="isValid" @submit.prevent="submit">

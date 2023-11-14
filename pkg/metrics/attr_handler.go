@@ -15,6 +15,7 @@ import (
 	"github.com/uptrace/uptrace/pkg/httputil"
 	"github.com/uptrace/uptrace/pkg/org"
 	"github.com/uptrace/uptrace/pkg/urlstruct"
+	"go.uber.org/zap"
 	"golang.org/x/exp/slices"
 )
 
@@ -87,6 +88,7 @@ func (h *AttrHandler) AttrKeys(w http.ResponseWriter, req bunrouter.Request) err
 	f.TimeGTE = time.Now().Add(-24 * time.Hour)
 
 	if err := DecodeAttrFilter(h.App, req, f); err != nil {
+		h.App.Logger.Error("decode attr filter", zap.Error(err))
 		return err
 	}
 
@@ -109,6 +111,7 @@ func (h *AttrHandler) AttrKeys(w http.ResponseWriter, req bunrouter.Request) err
 			OrderExpr("count DESC").
 			Limit(10000).
 			Scan(ctx, &items); err != nil {
+			h.App.Logger.Error("select metrics something", zap.Error(err))
 			return err
 		}
 
@@ -119,6 +122,7 @@ func (h *AttrHandler) AttrKeys(w http.ResponseWriter, req bunrouter.Request) err
 
 	attrKeys, err := h.selectAttrKeys(ctx, f)
 	if err != nil {
+		h.App.Logger.Error("select attr keys", zap.Error(err))
 		return err
 	}
 
@@ -126,6 +130,7 @@ func (h *AttrHandler) AttrKeys(w http.ResponseWriter, req bunrouter.Request) err
 	if user != nil {
 		pinnedAttrMap, err = org.SelectPinnedFacetMap(ctx, h.App, user.ID)
 		if err != nil {
+			h.App.Logger.Error("select pinned facet map", zap.Error(err))
 			return err
 		}
 	}
